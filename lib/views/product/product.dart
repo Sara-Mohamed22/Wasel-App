@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:wasel/models/iconModel.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
@@ -213,7 +214,7 @@ class ProductScreen extends StatelessWidget {
                       width: 28,
                       height: 28,
                     ),
-                    Text('Home' , style: TextStyle(color: gray),)
+                    Text('Home'.tr , style: TextStyle(color: gray),)
 
                   ],
 
@@ -229,7 +230,7 @@ class ProductScreen extends StatelessWidget {
                       width: 28,
                       height: 28,
                     ),
-                    Text('Search' , style: TextStyle(color: gray),)
+                    Text('Search'.tr , style: TextStyle(color: gray),)
                   ],
                 ) ,
 
@@ -250,7 +251,7 @@ class ProductScreen extends StatelessWidget {
                             width: 28 ,
                             height: 28 ,
                           ),
-                          Text('Category' , style: TextStyle(color: btnColor , fontSize: 12), )
+                          Text('Category'.tr , style: TextStyle(color: btnColor , fontSize: 12), )
                         ],
                       ),
                     ),
@@ -278,7 +279,7 @@ class ProductScreen extends StatelessWidget {
                             width: 28 ,
                             height: 28 ,
                           ),
-                          Text('Cart' , style: TextStyle(color: gray),)
+                          Text('Cart'.tr , style: TextStyle(color: gray),)
 
                         ],
                       ),
@@ -307,7 +308,7 @@ class ProductScreen extends StatelessWidget {
                             width: 28 ,
                             height: 28 ,
                           ),
-                          Text('Profile' , style: TextStyle(color: gray),)
+                          Text('Profile'.tr , style: TextStyle(color: gray),)
 
                         ],
                       ),

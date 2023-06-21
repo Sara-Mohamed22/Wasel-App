@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'style/fonts.dart';
+
 void  navTo(context , widget ) =>
     Navigator.push(context, MaterialPageRoute(builder: (context)=> widget ));
 
@@ -44,4 +46,30 @@ Color changeColorToast( ToastState state)
   }
 
   return color ;
+}
+
+Widget createString(
+    {
+      @required String? title,
+      @required  Color? color ,
+      FontWeight? weight ,
+      double? fontSize ,
+      String fontFam = fontFamily ,
+      int line =3
+
+
+    }
+    ){
+
+  return  Text( title! ,
+      maxLines: line ,
+      softWrap: true,
+      style: TextStyle(
+          color: color ,
+          fontFamily: fontFamily ,
+          fontSize: fontSize ,
+          fontWeight: weight,
+          overflow:TextOverflow.ellipsis
+
+      ));
 }

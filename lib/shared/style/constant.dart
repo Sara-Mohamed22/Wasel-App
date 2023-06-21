@@ -1,12 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 
 Color defColor = Color(0xFF1C2945);
 Color btnColor = Color(0xff7EC242);
 Color defborderColor = Color(0xFF8097B8);
 Color gray = Color(0xFF707070);
+String sign = '₺';
 
-String? lang  ;
+String? lang   ;
 dynamic token  ;
 
 const String loginString = 'سجل الدخول أو أنشئ حساب جديد' ;

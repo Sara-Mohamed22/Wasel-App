@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 
 
 
@@ -10,9 +11,8 @@ class DioHelper
 
   static init() {
     dio = Dio(BaseOptions(
-      // baseUrl: 'https://qevents-test.appclouders.com/api/',
-      //    baseUrl: 'https://qevent0108.alqemam.com/api/',
-      baseUrl: 'https://qevent010801.alqemam.com/api/',
+
+      baseUrl: 'https://matjar.appclouders.com/api/',
 
       receiveDataWhenStatusError: true ,
 
@@ -34,7 +34,7 @@ class DioHelper
     dio!.options.headers =
     {
       'Content-Type':'application/json' ,
-      // 'lang':  lang ,
+      'lang':  CashHelper.getData(key: 'lang') ,
       'Authorization':'Bearer $token',
     }
     ;
@@ -58,7 +58,7 @@ class DioHelper
     dio!.options.headers =
     {
       'Content-Type':'application/json' ,
-      // 'lang':lang ,
+      'lang':  CashHelper.getData(key: 'lang') ,
       'Authorization':'Bearer $token' ,
     }
     ;
@@ -83,7 +83,7 @@ class DioHelper
   {
     dio!.options.headers={
       'Content-Type':'application/json' ,
-      // 'lang':lang ,
+      'lang':  CashHelper.getData(key: 'lang') ,
       'Authorization':'Bearer $token' ,
 
     };
