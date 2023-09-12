@@ -26,6 +26,7 @@ class RegisterScreen extends StatelessWidget {
    var phon ;
 
 
+
   @override
   Widget build(BuildContext context) {
 
@@ -45,17 +46,44 @@ class RegisterScreen extends StatelessWidget {
               //
               //   }
 
-              showToast(msg: state.userModel?.msg ,
-                  state: ToastState.SUCCESS );
 
+                 if(state.userModel?.success == false )
+                   {
+
+                     if(state.userModel?.data?.phone != null  )
+                     showToast(msg: state.userModel?.data?.phone[0] ,
+                         state: ToastState.ERROR );
+
+
+                     if(state.userModel?.data?.email != null)
+                       showToast(msg: state.userModel?.data?.email[0] ,
+                         state: ToastState.ERROR );
+
+
+                     if(state.userModel?.data?.pass != null)
+                       showToast(msg: state.userModel?.data?.pass[0] ,
+                         state: ToastState.ERROR );
+
+                   }
+
+                 showToast(msg: state.userModel?.msg ,
+                     state: ToastState.SUCCESS );
 
               CashHelper.saveData(key: 'token', value: state.userModel?.data?.token).
               then((value) {
 
-                Navigator.pushReplacement(context,
+
+                CashHelper.saveData(key: 'name', value: state.userModel?.data?.name );
+                CashHelper.saveData(key: 'phone', value: state.userModel?.data?.phone );
+                CashHelper.saveData(key: 'email', value: state.userModel?.data?.email );
+                CashHelper.saveData(key: 'avater', value: state.userModel?.data?.avater );
+
+                Navigator.push(context,
                   MaterialPageRoute(builder: (context) => VerifyScreen(phoneNum: phon ,
                     code:  state.userModel?.data?.code ,)),
                 );
+
+
 
               }).catchError((e){
 
@@ -127,130 +155,191 @@ class RegisterScreen extends StatelessWidget {
                   ), */
 
 
-                          IntlPhoneField(
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.number,
-                            controller: phoneController,
-                            style: TextStyle(
-                                color: defColor ,
-                                fontFamily: fontFamily ,
-                                fontWeight: FontWeightManager.medium ,
-                                fontSize: FontSizeManager.s18
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'رقم المحمول' ,
-                              // errorText: 'Enter valid phone number , please',
-                              hintStyle: TextStyle(
-                                  color: gray ,
-                                  fontFamily: fontFamily,
-                                  fontSize: FontSizeManager.s15 ,
-                                  fontWeight: FontWeightManager.light
+                        StatefulBuilder
+                        ( builder: (context, setInnerState ) {
+                            return IntlPhoneField(
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              controller: phoneController,
+                              style: TextStyle(
+                                  color: defColor ,
+                                  fontFamily: fontFamily ,
+                                  fontWeight: FontWeightManager.medium ,
+                                  fontSize: FontSizeManager.s18
                               ),
-                              border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: gray)
+                              decoration: InputDecoration(
+                                hintText: 'رقم المحمول' ,
+                                // errorText: 'Enter valid phone number , please',
+                                hintStyle: TextStyle(
+                                    color: gray ,
+                                    fontFamily: fontFamily,
+                                    fontSize: FontSizeManager.s15 ,
+                                    fontWeight: FontWeightManager.light
+                                ),
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: gray)
+                                ),
+
+
                               ),
+                              // validator: (value)=> value!.isEmpty ? 'Enter your phone number , please' : null ,
+
+                              initialCountryCode: 'SA',
+                              onChanged: (phone) {
 
 
-                            ),
-                            // validator: (value)=> value!.isEmpty ? 'Enter your phone number , please' : null ,
 
-                            initialCountryCode: 'SA',
-                            onChanged: (phone) {
-                              print(phone.completeNumber.substring(1));
-                              phon = phone.completeNumber.substring(1)  ;
-                            },
+                                setInnerState((){
+                                  
+                                  print(phone.completeNumber.substring(1));
+                                  phon = phone.completeNumber.substring(1)  ;
+
+                                  if(formKey.currentState!.validate())
+                                  {
+
+                                  }
+
+                                });
+
+                              },
+                            );}
                           ),
 
                           SizedBox(height: 10,),
 
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.name,
-                            controller: nameController,
-                            style: TextStyle(
-                                color: defColor ,
-                                fontFamily: fontFamily ,
-                                fontWeight: FontWeightManager.medium ,
-                                fontSize: FontSizeManager.s18
-                            ),
-                            decoration: InputDecoration(
-                              hintText: name ,
-                              hintStyle: TextStyle(
-                                  color: gray ,
-                                  fontFamily: fontFamily,
-                                  fontSize: FontSizeManager.s15 ,
-                                  fontWeight: FontWeightManager.light
+                          StatefulBuilder
+                            ( builder: (context, setInnerState ) {
+                              return TextFormField(
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.name,
+                              controller: nameController,
+                              style: TextStyle(
+                                  color: defColor ,
+                                  fontFamily: fontFamily ,
+                                  fontWeight: FontWeightManager.medium ,
+                                  fontSize: FontSizeManager.s18
                               ),
-                              border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: gray)
+                              decoration: InputDecoration(
+                                hintText: name ,
+                                hintStyle: TextStyle(
+                                    color: gray ,
+                                    fontFamily: fontFamily,
+                                    fontSize: FontSizeManager.s15 ,
+                                    fontWeight: FontWeightManager.light
+                                ),
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: gray)
+                                ),
+
+
                               ),
 
+                              onChanged:(val)=> setInnerState((){
 
-                            ),
+                               if(formKey.currentState!.validate())
+                               {
+                                }
 
-                            validator: (value)=> value!.isEmpty ? 'Enter your name , please' : null ,
+                              }) ,
 
+                              validator: (value) {
+
+
+                                  return value!.isEmpty ? 'Enter your name , please' : null;
+
+
+                              }
+
+
+                            );
+                            }
 
                           ),
                           SizedBox(height: 15,),
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.emailAddress,
-                            controller: emailController,
-                            style: TextStyle(
-                                color: defColor ,
-                                fontFamily: fontFamily ,
-                                fontWeight: FontWeightManager.medium ,
-                                fontSize: FontSizeManager.s18
-                            ),
-                            decoration: InputDecoration(
-                              hintText: email ,
-                              hintStyle: TextStyle(
-                                  color: gray ,
-                                  fontFamily: fontFamily,
-                                  fontSize: FontSizeManager.s15 ,
-                                  fontWeight: FontWeightManager.light
+
+                           StatefulBuilder
+                          ( builder: (context, setInnerState ) {
+
+
+                            return TextFormField(
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.emailAddress,
+                              controller: emailController,
+                              style: TextStyle(
+                                  color: defColor ,
+                                  fontFamily: fontFamily ,
+                                  fontWeight: FontWeightManager.medium ,
+                                  fontSize: FontSizeManager.s18
                               ),
-                              border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: gray)
+                              decoration: InputDecoration(
+                                hintText: email ,
+                                hintStyle: TextStyle(
+                                    color: gray ,
+                                    fontFamily: fontFamily,
+                                    fontSize: FontSizeManager.s15 ,
+                                    fontWeight: FontWeightManager.light
+                                ),
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: gray)
+                                ),
+
+
                               ),
 
+                              onChanged:(val)=> setInnerState((){
 
-                            ),
+                                if(formKey.currentState!.validate())
+                                {
+                                }
 
-                            validator: (value)=> value!.isEmpty ? 'Enter your email , please' : null ,
+                              }) ,
+
+                              validator: (value)=> value!.isEmpty ? 'Enter your email , please' : null ,
 
 
+                            );
+                          }
                           ),
                           SizedBox(height: 15,),
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.name,
-                            controller: passController,
-                            style: TextStyle(
-                                color: defColor ,
-                                fontFamily: fontFamily ,
-                                fontWeight: FontWeightManager.medium ,
-                                fontSize: FontSizeManager.s18
-                            ),
-                            decoration: InputDecoration(
-                              hintText: pass ,
-                              hintStyle: TextStyle(
-                                  color: gray ,
-                                  fontFamily: fontFamily,
-                                  fontSize: FontSizeManager.s15 ,
-                                  fontWeight: FontWeightManager.light
+
+                         StatefulBuilder
+                       ( builder: (context, setInnerState ) {
+                            return TextFormField(
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.name,
+                              controller: passController,
+                              style: TextStyle(
+                                  color: defColor ,
+                                  fontFamily: fontFamily ,
+                                  fontWeight: FontWeightManager.medium ,
+                                  fontSize: FontSizeManager.s18
                               ),
-                              border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: gray)
+                              decoration: InputDecoration(
+                                hintText: pass ,
+                                hintStyle: TextStyle(
+                                    color: gray ,
+                                    fontFamily: fontFamily,
+                                    fontSize: FontSizeManager.s15 ,
+                                    fontWeight: FontWeightManager.light
+                                ),
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: gray)
+                                ),
+
+
                               ),
+                              onChanged:(val)=> setInnerState((){
+
+                                if(formKey.currentState!.validate())
+                                {
+                                }
+
+                              }) ,
+
+                              validator: (value)=> value!.isEmpty ? 'Enter your password , please' : null ,
 
 
-                            ),
-
-                            validator: (value)=> value!.isEmpty ? 'Enter your password , please' : null ,
-
-
+                            );}
                           ),
                         ],)),
 
@@ -273,6 +362,7 @@ class RegisterScreen extends StatelessWidget {
 
                             if(formKey.currentState!.validate())
                             {
+
                               print('login ');
 
 
@@ -368,7 +458,7 @@ class RegisterScreen extends StatelessWidget {
                               ),
                             ),
 
-                            InkWell(
+                          /*  InkWell(
                                 onTap: ()async{
                                   print('github');
                                   const url = 'https://github.com/';
@@ -380,7 +470,7 @@ class RegisterScreen extends StatelessWidget {
                                     throw 'Could not launch $url';
                                   }
                                 },
-                                child: FaIcon(FontAwesomeIcons.github , size: 32,)),
+                                child: FaIcon(FontAwesomeIcons.github , size: 32,)), */
 
                           ])
                     ],),

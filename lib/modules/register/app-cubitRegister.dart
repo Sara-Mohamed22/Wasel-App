@@ -49,6 +49,12 @@ class AppRegisterCubit extends Cubit<AppRegisterState>
 
        userModel = UserModel.FromJson(value.data);
 
+       print('vxxx ${userModel?.data?.phone}');
+       print('vxxx ${userModel?.data?.email}');
+       print('vxxx ${userModel?.data?.pass}');
+
+
+
        emit(AppRegisterSuccessState(userModel));
 
      }).
@@ -158,6 +164,9 @@ try {
       emit(VerifyCodeErrorState());
     });
   }
+
+
+
 
 
   VerifyModel? verifyModel ;

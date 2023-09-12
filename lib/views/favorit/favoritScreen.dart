@@ -2,11 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
 import 'package:wasel/shared/style/constant.dart';
 import 'package:wasel/shared/style/fonts.dart';
+import 'package:wasel/views/carts/cart.dart';
+import 'package:wasel/views/product/infoProduct.dart';
 
 class FavoritScreen extends StatelessWidget {
   const FavoritScreen({Key? key}) : super(key: key);
@@ -14,6 +17,8 @@ class FavoritScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppCubit cubit = AppCubit.get(context);
+
+    cubit.getAllFav() ;
 
     return BlocConsumer<AppCubit , AppState>(
       listener: (context , state){},
@@ -33,152 +38,107 @@ class FavoritScreen extends StatelessWidget {
               centerTitle: true,
 
             ),
+            body:
+                RefreshIndicator(
+                edgeOffset: .8 ,
+                onRefresh: () {
+                return Future.delayed(Duration(seconds: 3 ) , (){
+                cubit.getAllFav() ;
 
-            body: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0 , vertical: 20 ),
-                child: Column(
-                  children:
-                  [
-                    Card(
-                      elevation: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              child: Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnBoCAoWBN_45O6wERRCzNwcb_CAYaqzYJJA&usqp=CAU',
-                              ),
-                            ),
+                });
+                },
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0 , vertical: 20 ),
+                  child: Column(
+                    children:
+                    [
 
-                            Container(
-                              height: 80 ,
-                              child: VerticalDivider(thickness: 1, color: gray, ),
-                            ),
+                      Container(
+                        height: MediaQuery.of(context).size.height,
 
-                            Column(
-                              children:
-                              [
-                                Text('Orange 1 kilo',
-                                  maxLines: 2,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis ,
-                                  style: TextStyle(
-                                      color: defColor ,
-                                      fontFamily: fontFamily ,
-                                      fontWeight: FontWeightManager.medium
-                                  ),),
-                              ],
-                            ),
+                        child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          shrinkWrap: false,
 
-                            Spacer(),
+                          itemBuilder: (BuildContext ctx, index) {
 
-                            InkWell(
-                              onTap: (){
-                                print('right arrow');
-                              },
-                                child: Icon(Icons.arrow_forward_ios_outlined , color: btnColor , ))
+                            return
+                              InkWell(
+                                  onTap: (){
+
+                                        navTo(context, InfoProduct(title: cubit.favModel!.data![index].product!.name!,
+                                          product: cubit.favModel!.data![index].product ,) );
+
+                                  },
+                                  child:
+                                  Card(
+                                    elevation: 2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 80,
+                                            height: 80,
+                                            child: Image.network(cubit.favModel!.data![index].product!.images![0].medium! ,
+                                            ),
+                                          ),
+
+                                          Container(
+                                            height: 80 ,
+                                            child: VerticalDivider(thickness: 1, color: gray, ),
+                                          ),
+
+                                          Column(
+                                            children:
+                                            [
+                                              Text(cubit.favModel!.data![index].product!.name!,
+                                                maxLines: 2,
+                                                softWrap: true,
+                                                overflow: TextOverflow.ellipsis ,
+                                                style: TextStyle(
+                                                    color: defColor ,
+                                                    fontFamily: fontFamily ,
+                                                    fontWeight: FontWeightManager.medium
+                                                ),),
+                                            ],
+                                          ),
+
+                                          Spacer(),
+
+                                          InkWell(
+                                              onTap: (){
+                                                print('right arrow');
+
+                                                navTo(context, InfoProduct(
+
+                                                  title: cubit.favModel!.data![index].product?.name,
+                                                  product: cubit.favModel!.data![index].product ,)
+
+                                                  );
+
+                                              },
+                                              child: Icon(Icons.arrow_forward_ios_outlined , color: btnColor , ))
 
 
-                          ],
+                                        ],
+                                      ),
+                                    ),),
+
+
+                              );
+
+                          },
+
+                          itemCount:  cubit.favModel?.data?.length ?? 0,
                         ),
-                      ),),
-                    SizedBox(height: 10,),
-                    Card(
-                      elevation: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              child: Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnBoCAoWBN_45O6wERRCzNwcb_CAYaqzYJJA&usqp=CAU',
-                              ),
-                            ),
+                      ),
 
-                            Container(
-                              height: 80 ,
-                              child: VerticalDivider(thickness: 1, color: gray, ),
-                            ),
-
-                            Column(
-                              children:
-                              [
-                                Text('Orange 1 kilo',
-                                  maxLines: 2,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis ,
-                                  style: TextStyle(
-                                      color: defColor ,
-                                      fontFamily: fontFamily ,
-                                      fontWeight: FontWeightManager.medium
-                                  ),),
-                              ],
-                            ),
-
-                            Spacer(),
-
-                            InkWell(
-                                onTap: (){
-                                  print('right arrow');
-                                },
-                                child: Icon(Icons.arrow_forward_ios_outlined , color: btnColor , ))
-
-
-                          ],
-                        ),
-                      ),),
-                    Card(
-                      elevation: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              child: Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnBoCAoWBN_45O6wERRCzNwcb_CAYaqzYJJA&usqp=CAU',
-                              ),
-                            ),
-
-                            Container(
-                              height: 80 ,
-                              child: VerticalDivider(thickness: 1, color: gray, ),
-                            ),
-
-                            Column(
-                              children:
-                              [
-                                Text('Orange 1 kilo',
-                                  maxLines: 2,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis ,
-                                  style: TextStyle(
-                                      color: defColor ,
-                                      fontFamily: fontFamily ,
-                                      fontWeight: FontWeightManager.medium
-                                  ),),
-                              ],
-                            ),
-
-                            Spacer(),
-
-                            InkWell(
-                                onTap: (){
-                                  print('right arrow');
-                                },
-                                child: Icon(Icons.arrow_forward_ios_outlined , color: btnColor , ))
-
-
-                          ],
-                        ),
-                      ),),
-                    SizedBox(height: 10,),
-                  ],
+                      SizedBox(height: 10,),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -276,7 +236,12 @@ class FavoritScreen extends StatelessWidget {
 
                     CircleAvatar(radius: 10,
                       backgroundColor: defColor,
-                      child: Text('3' , style: TextStyle(color: Colors.white),),
+                      child:
+
+                      CashHelper.getData(key: 'notificationNum') !=null ?
+
+                      Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                      Text('0'   , style: TextStyle(color: Colors.white),),
                     )
 
 

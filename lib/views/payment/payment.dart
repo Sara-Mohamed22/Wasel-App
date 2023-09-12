@@ -2,12 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
 import 'package:wasel/shared/style/constant.dart';
 import 'package:wasel/shared/style/fonts.dart';
 
+import 'sendOrderScreen.dart';
 import 'verifyScreen.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -21,12 +23,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   String? initalVal ;
 
+
   @override
   Widget build(BuildContext context) {
 
+    // print('siriiiiii ${cartsList[0].price}');
+
     AppCubit cubit = AppCubit.get(context);
     return  BlocConsumer<AppCubit, AppState>(
-      listener: (context , state){},
+      listener: (context , state){
+        if(state is SendOrderSuccessState )
+          {
+
+             Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SendOrderScreen()),
+            );
+
+          }
+      },
       builder: (context,state){
 
         return Scaffold(
@@ -61,7 +75,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                       ),
                     ),
-                    Card(
+
+                    ListView.separated(
+                      shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context,index)=> Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -69,44 +87,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       elevation: 3,
                       child: RadioListTile(
                         title: createString(
-                            title: "Pay by credit card",
+                           // title: "Pay by credit card",
+                            title: "${cubit.paymentModel?.data?.data?[index].name }",
+
                             color: defColor ,
                             weight: FontWeightManager.semiBold
                         ),
-                        value: "Pay by credit card",
-                        groupValue: initalVal ,
-                        onChanged: (value){
-                          setState(() {
-                        initalVal = value.toString() ;
-                          });
-                        },
-                      ),
-                    ),
-
-                    SizedBox(height: 10,),
-
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-
-                      elevation: 3,
-                      child: RadioListTile(
-                        title: createString(
-                            title: "Pay by cash on delivery" ,
-                            color: defColor ,
-                            weight: FontWeightManager.semiBold
-                        ),
-                        value: "pay by cash on delivery",
+                        value: "${cubit.paymentModel?.data?.data?[index].name }",
                         groupValue: initalVal ,
                         onChanged: (value){
                           setState(() {
                             initalVal = value.toString() ;
+                            paymentID = cubit.paymentModel!.data!.data![index].id! ;
+                            cubit.selectPayment( cubit.paymentModel!.data!.data![index].id! );
 
+                            print('ratiiiiio ${cubit.paymentModel?.data?.data?[index].id}');
                           });
                         },
                       ),
-                    ),
+                    ) ,
+                        separatorBuilder: (context , index)=> SizedBox(height: 10,) ,
+                      itemCount: cubit.paymentModel!.data!.data!.length ,
+                         ),
+
+
 
 
                   ],
@@ -141,7 +145,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   fontWeight: FontWeightManager.semiBold,
                                   fontFamily: fontFamily
                               ),),
-                              Text('26.06  Lira',
+
+                              // Text('${cubit.total}  Lira',
+
+                                  Text('${CashHelper.getData(key: 'total')}  Lira',
+
                                   style: TextStyle(
                                       color: btnColor,
                                       fontSize: FontSizeManager.s15 ,
@@ -161,9 +169,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ),
                             child: MaterialButton(onPressed: (){
 
-                              Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) => VerifyScreen()),
+                              cubit.sendOrder(
+                                paymentID: paymentID  ,
+                                cartItems: cartsList
+
                               );
+
 
                               print('Payment');
 
@@ -263,11 +274,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             child: Column(
                               children: [
                                 Container(
-                                  child: Image.asset('assets/images/cart.png' , color: cubit.selectNavBar ,),
+                                  child: Image.asset('assets/images/cart.png' , color: cubit.unselectNavBar ,),
                                   width: 28 ,
                                   height: 28 ,
                                 ),
-                                Text('Cart'.tr , style: TextStyle(color: btnColor ),)
+                                Text('Cart'.tr , style: TextStyle(color: gray ),)
 
                               ],
                             ),
@@ -275,7 +286,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                           CircleAvatar(radius: 10,
                             backgroundColor: defColor,
-                            child: Text('3' , style: TextStyle(color: Colors.white),),
+                            child:
+                            CashHelper.getData(key: 'notificationNum') !=null ?
+                            Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                            Text('0'   , style: TextStyle(color: Colors.white),),
                           )
 
 

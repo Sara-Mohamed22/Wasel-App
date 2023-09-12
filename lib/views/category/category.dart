@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/models/iconModel.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
@@ -43,55 +44,74 @@ class CategoryScreen extends StatelessWidget {
             )
 
         ),
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Column(
-              children: [
+        body:
+        cubit.categoryModel!.data!.data !=null ?
+        RefreshIndicator(
+            edgeOffset: .8,
+            onRefresh: () {
+              return Future.delayed(Duration(seconds: 3 ) , (){
+                cubit.getAllCategories() ;
+
+              });
+            },
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Column(
+                children: [
 
 
-                 Container(
-                   height: MediaQuery.of(context).size.height,
-                   child: GridView.builder(
-                                  physics: BouncingScrollPhysics(),
-                                  shrinkWrap: false,
-                                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                                        maxCrossAxisExtent: 200,
-                                        childAspectRatio: 3 / 2,
-                                        crossAxisSpacing: 20,
-                                        mainAxisSpacing: 20),
-                                    itemCount: iconSliders.length,
-                                    itemBuilder: (BuildContext ctx, index) {
-                                    return
-                                      InkWell(
-                                        onTap: (){
-                                          print('11111');
-                                          navTo(context, ProductScreen(title: iconSliders[index].title ,) );
-                                        },
-                                        child: Card(
+                   Container(
+                     height: MediaQuery.of(context).size.height/1.5,
+                     child: GridView.builder(
+                                    physics: BouncingScrollPhysics(),
+                                    shrinkWrap: false,
+                                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent: 200,
+                                          childAspectRatio: 3 / 3.2,
+                                          crossAxisSpacing: 20,
+                                          mainAxisSpacing: 20),
+                                      itemCount: cubit.categoryModel!.data!.data!.length ,
+                                      itemBuilder: (BuildContext ctx, index) {
+                                      return
+                                        InkWell(
+                                          onTap: ()async{
+                                            print('11111 ${ cubit.categoryModel!.data!.data![index].id }');
+                                           cubit.getAllProductsOFCategories(id:cubit.categoryModel!.data!.data![index].id )!.
+                                           then((value) {
 
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                          ),
+                                             navTo(context, ProductScreen(title: cubit.categoryModel!.data!.data![index].name ,) );
 
-                                          elevation: 3,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center ,
-                                              children: [
-                                                Image.asset(iconSliders[index].img!),
-                                                Text(iconSliders[index].title! ,
-                                                  softWrap: true,
-                                                  textAlign: TextAlign.center ,
-                                                  maxLines: 2,
-                                                  style: TextStyle(color: btnColor , ),)
-                                              ],
+                                           });
+                                          },
+                                          child: Card(
+
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0),
+                                            ),
+
+                                            elevation: 3,
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center ,
+                                                children: [
+
+                                                  Image.network(cubit.categoryModel!.data!.data![index].image!.medium!),
+
+                                                  Expanded(
+                                                    child: Text(cubit.categoryModel!.data!.data![index].name! ,
+                                                      softWrap: true,
+                                                      textAlign: TextAlign.center ,
+                                                      maxLines: 2,
+                                                      style: TextStyle(color: btnColor , ),),
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
+                                        );
 
 
 
@@ -99,12 +119,16 @@ class CategoryScreen extends StatelessWidget {
 
 
 
-                                    }),
-                 ),
-              ],
+                                      }),
+                   ),
+                ],
+              ),
             ),
           ),
-        ),
+        ) :
+           Center(
+               child: CircularProgressIndicator()),
+
           bottomNavigationBar:
           BottomNavigationBar(
 
@@ -198,7 +222,10 @@ class CategoryScreen extends StatelessWidget {
 
                   CircleAvatar(radius: 10,
                     backgroundColor: defColor,
-                    child: Text('3' , style: TextStyle(color: Colors.white),),
+                    child:
+                    CashHelper.getData(key: 'notificationNum') !=null ?
+                    Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                    Text('0'   , style: TextStyle(color: Colors.white),),
                   )
 
 

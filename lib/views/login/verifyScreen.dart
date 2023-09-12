@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/modules/register/app-cubitRegister.dart';
 import 'package:wasel/modules/register/app-stateRegister.dart';
 import 'package:wasel/shared/component.dart';
@@ -66,6 +67,9 @@ class _VerifyScreenState extends State<VerifyScreen> with SingleTickerProviderSt
 
          if(state is VerifyCodeSuccessState )
           {
+
+
+            CashHelper.saveData(key: 'token', value: state.userVerifyModel?.data?.token);
 
             showToast(msg: state.userVerifyModel?.msg ,
                 state: ToastState.SUCCESS );

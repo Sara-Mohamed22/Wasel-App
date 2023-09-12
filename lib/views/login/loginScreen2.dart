@@ -1,4 +1,5 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:firebase_phone_auth_handler/firebase_phone_auth_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wasel/data/local/cashHelper.dart';
@@ -11,6 +12,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wasel/views/homeScreen/homeScreen.dart';
+import 'package:wasel/views/maps/mapScreen.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+
+
 
 import 'verifyScreen.dart';
 
@@ -22,7 +28,99 @@ class LoginScreen2 extends StatelessWidget {
   TextEditingController passController = TextEditingController();
    var phon ;
 
-  @override
+
+
+
+ /*  Future<UserCredential> signInWithFacebook() async {
+
+      final LoginResult loginResult = await FacebookAuth.instance.login();
+
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+      return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+
+
+   }*/
+
+
+    signInWithFacebook()async  {
+      LoginResult? loginResult ;
+
+
+
+      await  FacebookAuth.instance.login().then((value) {
+         print('ppppp ${value.accessToken }');
+
+
+         loginResult = value ;
+       }).
+       catchError((e){
+         print('eee ${e.toString()}');
+       });
+
+        // print('vv111 ${loginResult?.accessToken}');
+
+        final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult!.accessToken!.token );
+
+
+        FirebaseAuth.instance.signInWithCredential(facebookAuthCredential).
+        then((value){
+          print('v222 ${value}');
+        }).
+        catchError((e){
+          print('e22 ${e.toString()}');
+        });
+
+
+
+
+
+   }
+
+   Future<void> fbLogin()async{
+     try{
+       print('success1');
+
+       // FacebookLogin()
+
+        final LoginResult result = await FacebookAuth.instance.login();
+        // dynamic result = await FacebookAuth.instance.s; // by default we request the email and the public profile
+
+
+
+       // if (result.status == LoginStatus.success) {
+       
+         print('success ${result.accessToken?.token }');
+
+
+         final AccessToken accessToken = result.accessToken!;
+
+         final userData = await FacebookAuth.instance.getUserData();
+         print('nnnn  ${userData['name']}');
+
+       // }
+
+     }catch(e){
+
+       print('ee ${e}');
+
+
+     }
+   }
+
+
+
+
+
+
+
+
+
+
+
+   @override
   Widget build(BuildContext context) {
     AppLoginCubit cubit = AppLoginCubit.get(context);
 
@@ -31,15 +129,35 @@ class LoginScreen2 extends StatelessWidget {
 
         if(state is AppLoginSuccessState )
           {
-            showToast(msg: state.userModel?.msg ,
+
+            if(state.userModel?.data != null)
+
+            {
+              showToast(msg: state.userModel?.msg ,
                 state: ToastState.SUCCESS );
+
+            }
+
+
+            if(state.userModel?.data == null )
+            {
+              showToast(msg: state.userModel?.msg ,
+                  state: ToastState.ERROR );
+
+            }
 
 
             CashHelper.saveData(key: 'token', value: state.userModel?.data?.token).
             then((value) {
 
+              CashHelper.saveData(key: 'name', value: state.userModel?.data?.name );
+              CashHelper.saveData(key: 'phone', value: state.userModel?.data?.phone );
+              CashHelper.saveData(key: 'email', value: state.userModel?.data?.email );
+              CashHelper.saveData(key: 'avater', value: state.userModel?.data?.avater );
+
               Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
+                 MaterialPageRoute(builder: (context) => HomeScreen()),
+             //  MaterialPageRoute(builder: (context) =>MapScreen()),
               );
 
             }).catchError((e){
@@ -49,6 +167,25 @@ class LoginScreen2 extends StatelessWidget {
             });
 
           }
+
+
+
+
+
+        if(state is GoogleSuccessState )
+        {
+          showToast(msg: 'Success login' ,
+              state: ToastState.SUCCESS );
+
+          Navigator.pushReplacement(context,
+            // MaterialPageRoute(builder: (context) => HomeScreen()),
+            MaterialPageRoute(builder: (context) =>MapScreen()),
+
+          );
+
+        }
+
+
       },
       builder: (context , state){
         return Scaffold(
@@ -210,7 +347,8 @@ class LoginScreen2 extends StatelessWidget {
                           ),  ),),
                       ),
                     ),
-                fallback: (context)=> Padding(
+                fallback: (context)=>
+                    Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
 
                   child: CircularProgressIndicator(),
@@ -240,10 +378,10 @@ class LoginScreen2 extends StatelessWidget {
                         children: [
 
                           InkWell(
-                            onTap: ()async{
+                            onTap: (){
                               print('fb');
 
-                              const url = 'https://ar-ar.facebook.com/';
+                             /* const url = 'https://ar-ar.facebook.com/';
 
                               if(await canLaunch(url)){
                                 await launch(url);
@@ -251,6 +389,14 @@ class LoginScreen2 extends StatelessWidget {
                               else {
                                 throw 'Could not launch $url';
                               }
+
+                              */
+
+                            // signInWithFacebook() ;
+                              fbLogin();
+
+
+
 
 
                             },
@@ -259,16 +405,10 @@ class LoginScreen2 extends StatelessWidget {
                           ),
 
                           InkWell(
-                            onTap: ()async{
+                            onTap: (){
                               print('google');
-                              const url = 'https://www.google.com/';
 
-                              if(await canLaunch(url)){
-                                await launch(url);
-                              }
-                              else {
-                                throw 'Could not launch $url';
-                              }
+                              // cubit.signInWithGoogle();
 
                             },
                             child: CircleAvatar(
@@ -283,6 +423,8 @@ class LoginScreen2 extends StatelessWidget {
                             ),
                           ),
 
+                           /*
+                           github
                           InkWell(
                               onTap: ()async{
                                 print('github');
@@ -296,6 +438,7 @@ class LoginScreen2 extends StatelessWidget {
                                 }
                               },
                               child: FaIcon(FontAwesomeIcons.github , size: 32,)),
+                              */
 
                         ])
                   ],),

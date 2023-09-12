@@ -5,7 +5,7 @@ class CategoryModel {
 
   CategoryModel ({this.success, this.data, this.message});
 
-  CategoryModel.fromJson(Map<String, dynamic> json) {
+  CategoryModel.FromJson(Map<String, dynamic> json) {
     success = json['success'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message'];
@@ -58,14 +58,14 @@ class Data {
 class DataInfo {
   int? id;
   String? name;
-  Image? image;
+  Img? image;
 
   DataInfo({this.id, this.name, this.image});
 
   DataInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    image = json['image'] != null ? new Image.fromJson(json['image']) : null;
+    image = json['image'] != null ? new Img.fromJson(json['image']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -80,7 +80,7 @@ class DataInfo {
 }
 
 
-class Image {
+class Img{
   String? thumb;
   String? small;
   String? medium;
@@ -88,7 +88,7 @@ class Image {
   String? extraLarge;
   String? original;
 
-  Image(
+  Img(
       {this.thumb,
         this.small,
         this.medium,
@@ -96,7 +96,7 @@ class Image {
         this.extraLarge,
         this.original});
 
-  Image.fromJson(Map<String, dynamic> json) {
+  Img.fromJson(Map<String, dynamic> json) {
     thumb = json['thumb'];
     small = json['small'];
     medium = json['medium'];

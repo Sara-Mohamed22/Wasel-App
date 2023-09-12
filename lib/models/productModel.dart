@@ -77,12 +77,22 @@ class DataInfo {
   String? stockType;
   bool? canBuy;
   String? code;
-  List<dynamic>? images;
-  DefaultImage? defaultImage;
+  bool? isFavored ;
+  List<Img>? images ;
+  // dynamic images;
+
+  Img? defaultImage;
+  // dynamic defaultImage;
+
   List<CustomFields>? customFields;
+  // dynamic customFields;
+
   Offer? availableOffer;
+  // dynamic availableOffer;
+
   List<dynamic>? textOptions;
   List<dynamic>? selectOptions;
+  int? initalQuantity   ;
 
 
   DataInfo(
@@ -98,11 +108,13 @@ class DataInfo {
         this.stockType,
         this.canBuy,
         this.code,
+        this.isFavored ,
         this.images,
         this.defaultImage,
         this.customFields,
         this.availableOffer,
         this.textOptions,
+        this.initalQuantity ,
         this.selectOptions});
 
 
@@ -119,16 +131,18 @@ class DataInfo {
     stockType = json['stock_type'];
     canBuy = json['can_buy'];
     code = json['code'];
+    initalQuantity = json['initalQuantity'] != null ? json['initalQuantity'] : 1 ;
+    isFavored = json["isFavored"];
 
     if (json['images'] != null) {
       images = [];
       json['images'].forEach((v) {
-        images!.add(v);
+        images!.add(Img.fromJson(v));
       });
     }
 
     defaultImage = json['default_image'] != null
-        ? new DefaultImage.fromJson(json['default_image'])
+        ? new Img.fromJson(json['default_image'])
         : null;
 
     if (json['customFields'] != null) {
@@ -173,6 +187,7 @@ class DataInfo {
     data['stock_type'] = this.stockType;
     data['can_buy'] = this.canBuy;
     data['code'] = this.code;
+    data['initalQuantity'] = initalQuantity  ;
 
 
     if (this.images != null) {
@@ -201,7 +216,7 @@ class DataInfo {
   }
 }
 
-class DefaultImage {
+class Img {
   String? thumb;
   String? small;
   String? medium;
@@ -209,7 +224,7 @@ class DefaultImage {
   String? extraLarge;
   String? original;
 
-  DefaultImage(
+  Img(
       {this.thumb,
         this.small,
         this.medium,
@@ -217,7 +232,7 @@ class DefaultImage {
         this.extraLarge,
         this.original});
 
-  DefaultImage.fromJson(Map<String, dynamic> json) {
+  Img.fromJson(Map<String, dynamic> json) {
     thumb = json['thumb'];
     small = json['small'];
     medium = json['medium'];

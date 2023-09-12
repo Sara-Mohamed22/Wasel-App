@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
@@ -19,6 +20,9 @@ class OrderScreen extends StatelessWidget {
     return  BlocConsumer<AppCubit , AppState>(
       listener: (context, state){},
       builder: (context , state){
+
+        print('784 ${cubit.orderModel?.bdata?.bdata?[0].status}');
+//
         return Scaffold(
             appBar:  AppBar(
               automaticallyImplyLeading: false,
@@ -34,120 +38,141 @@ class OrderScreen extends StatelessWidget {
               centerTitle: true,
 
             ),
-            body: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0 , horizontal:  20),
-                child: Column(
-                  children: [
-                    
-                    Card(
-                      child:
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+            body:     RefreshIndicator(
+              edgeOffset: .8,
+              onRefresh: () {
+                return Future.delayed(Duration(seconds: 3 ) , (){
+                  cubit.getAllOrders() ;
+                });
+              },
+              child: SingleChildScrollView(
+                // physics: BouncingScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0 , horizontal:  20),
 
-                        child: Expanded(
-                          
-                          child: Row(
-                            children:
-                            [
-                              
-                              Column(
-                              crossAxisAlignment: CrossAxisAlignment.start ,
-                              children:
+                  child: cubit.orderModel?.bdata?.bdata !=null ?
+                  Container(
+                    height: MediaQuery.of(context).size.height ,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context , index){
+                          return Card(
+                          child:
+                          Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
 
-                              [
-                                Row(
-                                  children: [
-                                    createString(
-                                        title: 'Order Number : ',
-                                        color: defColor ,
-                                       weight: FontWeightManager.regular ,
-                                      fontSize: 13
-                                    ),
+                          child:
 
-                                    createString(
-                                        title: ' #123456789',
-                                        color: defColor ,
-                                        weight: FontWeightManager.regular ,
-                                        fontSize: 13
-                                    ),
+                          Row(
+                          children:
+                          [
 
-                                    SizedBox(width: 20,),
+                          Column(
+                          crossAxisAlignment: CrossAxisAlignment.start ,
+                          children:
 
-                                    createString(
-                                        title: '26.07',
-                                        color: btnColor ,
-                                        weight: FontWeightManager.semiBold ,
-                                        fontSize: 13
-                                    ),
-
-                                    SizedBox(width: 3,),
-
-                                    createString(
-                                        title: 'Lira',
-                                        color: btnColor ,
-                                        weight: FontWeightManager.semiBold ,
-                                        fontSize: 13
-                                    ),
-                                  ],
-                                ),
-
-
-
-                                Row(
-                                  children: [
-                                    createString(
-                                        title: 'Request Preparing',
-                                        color: Color(0xFF4267B2) ,
-                                        weight: FontWeightManager.regular ,
-                                        fontSize: 15
-                                    ),
-
-                                    SizedBox(width: 30,),
-                                    createString(
-                                        title: 'June 14,2023',
-                                        color: Color(0xFF4267B2) ,
-                                        weight: FontWeightManager.regular ,
-                                        fontSize: 13
-                                    ),
-
-                                  ],
-                                ),
-
-                              ],
-                            ),
-
-
-                              Expanded(
-                                child: InkWell(
-                                  child: Icon(Icons.arrow_forward_ios_outlined, color: btnColor, ),
-                                  onTap: (){
-                                    print('arrowww');
-
-                                    Navigator.pushReplacement(context,
-                                      MaterialPageRoute(builder: (context) => OrderDetail()),
-                                    );
-
-                                  },
-                                ),
-                              ),
-
-
-
-
-
-
-                            ],
+                          [
+                          Row(
+                          children: [
+                          createString(
+                          title: 'Order Number : ',
+                          color: defColor ,
+                          weight: FontWeightManager.regular ,
+                          fontSize: 13
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
+
+                          createString(
+                          // title: ' #123456789',
+                              title: ' #${cubit.orderModel?.bdata?.bdata?[index].id}',
+
+                              color: defColor ,
+                              weight: FontWeightManager.semiBold ,
+                              fontSize: 13
+                ),
+
+                SizedBox(width: 20,),
+
+                createString(
+                title: '${cubit.orderModel?.bdata?.bdata?[index].total}',
+                color: btnColor ,
+                weight: FontWeightManager.semiBold ,
+                fontSize: 13
+                ),
+
+                SizedBox(width: 3,),
+
+                createString(
+                title: 'Lira',
+                color: btnColor ,
+                weight: FontWeightManager.semiBold ,
+                fontSize: 13
+                ),
+                ],
+                ),
+
+
+
+                Row(
+                children: [
+                createString(
+                title: '${cubit.orderModel?.bdata?.bdata?[index].status }',
+                color: Color(0xFF4267B2) ,
+                weight: FontWeightManager.regular ,
+                fontSize: 15
+                ),
+
+                SizedBox(width: 30,),
+                createString(
+                title: '${cubit.orderModel?.bdata?.bdata?[index].createdAtFormatted}',
+                color: Color(0xFF4267B2) ,
+                weight: FontWeightManager.regular ,
+                fontSize: 13
+                ),
+
+                ],
+                ),
+
+                ],
+                ),
+
+               Spacer(),
+
+                InkWell(
+                child: Icon(Icons.arrow_forward_ios_outlined, color: btnColor, ),
+                onTap: (){
+                print('arrowww');
+
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => OrderDetail(
+                  sendOrderModel: cubit.orderModel?.bdata?.bdata?[index]  ,)),
+                );
+
+                },
+                ),
+
+
+
+
+
+
+                ],
+                ),
+                ),
+                );
+                        },
+
+                        separatorBuilder: (context , index)=> SizedBox(height: 10,),
+                        itemCount: cubit.orderModel!.bdata!.bdata!.length ),
+                  ):
+                    Center(child: Text('Empty...'),
+
+
                 ),
               ),
             ),
-
+              ),
             bottomNavigationBar:
             BottomNavigationBar(
 
@@ -241,7 +266,12 @@ class OrderScreen extends StatelessWidget {
 
                     CircleAvatar(radius: 10,
                       backgroundColor: defColor,
-                      child: Text('3' , style: TextStyle(color: Colors.white),),
+                      child:
+
+                      CashHelper.getData(key: 'notificationNum') !=null ?
+
+                      Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                      Text('0'   , style: TextStyle(color: Colors.white),),
                     )
 
 

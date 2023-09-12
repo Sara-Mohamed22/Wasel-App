@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:wasel/data/local/cashHelper.dart';
@@ -34,12 +36,19 @@ class DioHelper
     dio!.options.headers =
     {
       'Content-Type':'application/json' ,
+      'Accept' : 'application/json',
       'lang':  CashHelper.getData(key: 'lang') ,
-      'Authorization':'Bearer $token',
+      'Authorization':'Bearer ${CashHelper.getData(key: 'token')}',
+
     }
     ;
 
-    return await  dio!.get(url! , queryParameters: query ) ;
+    return await  dio!.get(url! , queryParameters: query ,
+        options:
+        Options(
+        followRedirects: false,
+        validateStatus: (status) { return status! < 500; }
+    )) ;
   }
 
 
@@ -57,12 +66,20 @@ class DioHelper
 
     dio!.options.headers =
     {
+      'Accept' : 'application/json',
       'Content-Type':'application/json' ,
       'lang':  CashHelper.getData(key: 'lang') ,
-      'Authorization':'Bearer $token' ,
+      'Authorization':'Bearer ${CashHelper.getData(key: 'token')}' ,
     }
     ;
-    return await  dio!.post(url! , queryParameters: query , data: data , );
+    return await  dio!.post(url! , queryParameters: query , data: data ,
+        options:
+        Options(
+        followRedirects: false,
+        validateStatus: (status) { return status! < 500; }
+    )
+
+    );
 
   }
 
@@ -84,7 +101,7 @@ class DioHelper
     dio!.options.headers={
       'Content-Type':'application/json' ,
       'lang':  CashHelper.getData(key: 'lang') ,
-      'Authorization':'Bearer $token' ,
+      'Authorization':'Bearer ${CashHelper.getData(key: 'token')}' ,
 
     };
     return await  dio!.put(url! , queryParameters: query , data: data);

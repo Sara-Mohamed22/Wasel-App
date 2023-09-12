@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
@@ -10,12 +11,12 @@ import 'package:wasel/shared/style/fonts.dart';
 import 'package:wasel/views/payment/payment.dart';
 
 class CheckoutScreen extends StatelessWidget {
-  const CheckoutScreen({Key? key}) : super(key: key);
+  List<dynamic>? products ;
+   CheckoutScreen({Key? key , this.products }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     AppCubit cubit = AppCubit.get(context);
-
 
 
     return  BlocConsumer<AppCubit, AppState>(
@@ -81,76 +82,63 @@ class CheckoutScreen extends StatelessWidget {
                       ),
 
                       Container(
-                        height: 40,
-                        child:
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                        // height: MediaQuery.of(context).size.height/2 ,
+                        child: ListView.separated(
 
-                                createString(
-                                    title:'1 Kilo of Orange' ,
-                                    color: defColor,
-                                    fontSize: 15 ,
-                                    weight: FontWeightManager.semiBold
-
-                                ),
-                                
-                                createString(
-                                    title:'1X' ,
-                                    color: btnColor,
-                                    fontSize: 15 ,
-                                    weight: FontWeightManager.semiBold
-
-                                ),
-
-                                
-                                createString(
-                                    title:'8.90' ,
-                                    color: btnColor,
-                                    fontSize: 15 ,
-                                    weight: FontWeightManager.semiBold
-
-                                ),
-                              ],
-                            )
-                        ),
-
-                      Divider(thickness: 2, color: Colors.black12),
-
-                      Container(
-                          height: 40,
-                          child:
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-
-                              createString(
-                                  title:'1 Kilo of Orange' ,
-                                  color: defColor,
-                                  fontSize: 15 ,
-                                  weight: FontWeightManager.semiBold
-
-                              ),
-
-                              createString(
-                                  title:'1X' ,
-                                  color: btnColor,
-                                  fontSize: 15 ,
-                                  weight: FontWeightManager.semiBold
-
-                              ),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemBuilder: (context , index){
 
 
-                              createString(
-                                  title:'8.90' ,
-                                  color: btnColor,
-                                  fontSize: 15 ,
-                                  weight: FontWeightManager.semiBold
+                              return
 
-                              ),
-                            ],
-                          )
+                                Container(
+                                    height: 40,
+                                    child:
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+
+                                        Container(
+                                          width: 200 ,
+                                          child: createString(
+                                              title:'${products?[index].name}' ,
+                                              color: defColor,
+                                              fontSize: 15 ,
+                                              weight: FontWeightManager.semiBold
+
+                                          ),
+                                        ),
+
+                                        createString(
+                                            title:'${products?[index].initalQuantity}X' ,
+                                            color: btnColor,
+                                            fontSize: 15 ,
+                                            weight: FontWeightManager.semiBold
+
+                                        ),
+
+
+                                        createString(
+                                            title:'${products?[index].price}' ,
+                                            color: btnColor,
+                                            fontSize: 15 ,
+                                            weight: FontWeightManager.semiBold
+
+                                        ),
+                                      ],
+                                    )
+                                );
+
+                            }
+
+                            ,
+                            separatorBuilder: (context, index)=> SizedBox(height: 20,),
+                            itemCount: products!.length ),
                       ),
+
+
 
                       Divider(thickness: 2, color: Colors.black12),
 
@@ -165,7 +153,9 @@ class CheckoutScreen extends StatelessWidget {
 
                           ),
                           createString(
-                              title:'26.07' ,
+                              // title:'${cubit.total}' ,
+                              title:'${CashHelper.getData(key: 'total')}' ,
+
                               color: btnColor,
                               fontSize: 18 ,
                               weight: FontWeightManager.semiBold
@@ -297,7 +287,10 @@ class CheckoutScreen extends StatelessWidget {
                                     fontWeight: FontWeightManager.semiBold,
                                     fontFamily: fontFamily
                                 ),),
-                                Text('26.06  Lira',
+                                // Text('${cubit.total }  Lira',
+                                    Text('${ CashHelper.getData(key: 'total')}  Lira',
+
+
                                     style: TextStyle(
                                         color: btnColor,
                                         fontSize: FontSizeManager.s15 ,
@@ -431,7 +424,10 @@ class CheckoutScreen extends StatelessWidget {
 
                             CircleAvatar(radius: 10,
                               backgroundColor: defColor,
-                              child: Text('3' , style: TextStyle(color: Colors.white),),
+                              child:
+                              CashHelper.getData(key: 'notificationNum') !=null ?
+                              Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                              Text('0'   , style: TextStyle(color: Colors.white),),
                             )
 
 

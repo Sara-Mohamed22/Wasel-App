@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
@@ -50,59 +51,61 @@ class ContactScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 20,),
 
-                    Card(
-                      child:
-                      InkWell(
-                        onTap: ()async{
-                          const url = 'https://api.whatsapp.com/send?phone=${09177}';
-                          if(await canLaunch(url)){
-                          await launch(url);
-                          }else {
-                          throw 'Could not launch $url';
-                          }
 
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+                       Card(
+                        child:
+                        InkWell(
+                          onTap: ()async{
+                            final url = 'https://api.whatsapp.com/send?phone=${cubit.contactModel?.data?.whatsNumber}';
+                            if(await canLaunch(url)){
+                            await launch(url);
+                            }else {
+                            throw 'Could not launch $url';
+                            }
 
-                          child: Column(
-                            children:
-                            [
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
 
-                              Row(
-                                children: [
+                            child: Column(
+                              children:
+                              [
 
-                                  FaIcon(FontAwesomeIcons.whatsapp ,
-                                    color: btnColor, size: 32,),
+                                Row(
+                                  children: [
 
-                                  SizedBox(width: 15,),
+                                    FaIcon(FontAwesomeIcons.whatsapp ,
+                                      color: btnColor, size: 32,),
 
-                                  createString(
-                                      title: 'WhatsApp',
-                                      color: defColor ,
-                                      weight: FontWeightManager.semiBold,
-                                      fontSize: 15
-                                  ),
+                                    SizedBox(width: 15,),
 
-                                  Spacer(),
+                                    createString(
+                                        title: 'WhatsApp',
+                                        color: defColor ,
+                                        weight: FontWeightManager.semiBold,
+                                        fontSize: 15
+                                    ),
 
-                                  Icon(Icons.arrow_forward_ios_outlined, color: btnColor, ),
+                                    Spacer(),
+
+                                    Icon(Icons.arrow_forward_ios_outlined, color: btnColor, ),
 
 
-                                ],),
+                                  ],),
 
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
+
 
                     Card(
                       child:
                       InkWell(
 
                         onTap: ()async{
-                          const url = "tel: ";
+                          final url = "tel: ${cubit.contactModel?.data?.phone}";
                           if (await canLaunch(url ))
                           {
                             await launch(url);
@@ -158,7 +161,7 @@ class ContactScreen extends StatelessWidget {
 
                           // Uri mail = Uri.parse("mailto:$email?subject=$subject&body=$body");
 
-                          Uri mail = Uri.parse("mailto:");
+                          Uri mail = Uri.parse("mailto:${cubit.contactModel?.data?.email}");
                           if (await launchUrl(mail))
                           {
                           }
@@ -297,7 +300,11 @@ class ContactScreen extends StatelessWidget {
 
                     CircleAvatar(radius: 10,
                       backgroundColor: defColor,
-                      child: Text('3' , style: TextStyle(color: Colors.white),),
+                      child:
+
+                      CashHelper.getData(key: 'notificationNum') !=null ?
+                      Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                      Text('0'   , style: TextStyle(color: Colors.white),),
                     )
 
 

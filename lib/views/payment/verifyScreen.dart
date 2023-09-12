@@ -59,7 +59,7 @@ class VerifyScreen extends StatelessWidget {
                 ),
                 child: MaterialButton(onPressed: (){
 
-                  Navigator.pushReplacement(context,
+                  Navigator.push(context,
                     MaterialPageRoute(builder: (context) => SendOrderScreen()),
                   );
 

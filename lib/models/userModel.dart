@@ -13,7 +13,7 @@ class UserModel
    return
      {
       "success" : success,
-       "data": data?.toJson(),
+       "data": data?.toJson() ,
        "message" : msg ,
 
      };
@@ -23,7 +23,7 @@ class UserModel
  {
    success =json["success"] ;
    msg =json["message"] ;
-   data =Data.FromJson( json["data"]) ;
+   data = json["data"] !=null ?  Data.FromJson( json["data"]) : null ;
 
  }
 
@@ -34,6 +34,7 @@ class Data
 {
   int? id ;
   String? name ;
+  dynamic pass ;
   dynamic email ;
  dynamic phone ;
   String? type ;
@@ -50,7 +51,7 @@ class Data
 
 
   Data({
-    this.id, this.name, this.email,
+    this.id, this.name, this.email,this.pass ,
     this.phone,this.type, this.code, this.avater,
     this.deviceToken, this.preferredLocal,
     this.token, this.createAtFormat,this.createAt,
@@ -61,6 +62,7 @@ class Data
     return {
       "id":id,
       "name": name ,
+      "password": pass ,
       "email": email ,
       "phone":phone,
       "type": type,
@@ -81,6 +83,7 @@ Data.FromJson(Map<String , dynamic> json)
   {
     id = json['id'];
     name = json['name'];
+    pass =  json['password'];
     email = json['email'];
     phone = json['phone'];
     type = json['type'];

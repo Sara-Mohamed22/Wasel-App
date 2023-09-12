@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/style/constant.dart';
 import 'package:wasel/shared/style/fonts.dart';
 import 'package:wasel/views/maps/mapScreen.dart';
@@ -8,6 +9,8 @@ class SuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('ddd ${CashHelper.getData(key: 'token')}');
+    
     return  Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(child:
@@ -66,7 +69,7 @@ class SuccessScreen extends StatelessWidget {
 
                         print('login');
 
-                        Navigator.pushReplacement(context,
+                        Navigator.push(context,
                           MaterialPageRoute(builder: (context) => MapScreen()),
                         );
 

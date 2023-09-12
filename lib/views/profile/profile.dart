@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:language_picker/language_picker_dropdown.dart';
 import 'package:language_picker/languages.dart';
 import 'package:wasel/data/local/cashHelper.dart';
+import 'package:wasel/modules/login/app-stateLogin.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
@@ -12,8 +13,12 @@ import 'package:wasel/shared/style/constant.dart';
 import 'package:wasel/shared/style/fonts.dart';
 import 'package:wasel/views/contact-us-screen/contactScreen.dart';
 import 'package:wasel/views/favorit/favoritScreen.dart';
+import 'package:wasel/views/location/locationScreen.dart';
+import 'package:wasel/views/login/editDataScreen.dart';
+import 'package:wasel/views/login/loginScreen1.dart';
 import 'package:wasel/views/login/loginScreen2.dart';
 import 'package:wasel/views/orders/orderScreen.dart';
+import 'package:wasel/views/payment/payment.dart';
 import 'package:wasel/views/suggestion/suggestScreen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -22,11 +27,17 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     AppCubit cubit = AppCubit.get(context);
 
     return BlocConsumer<AppCubit ,AppState>(
-      listener:(context , state){} ,
+      listener:(context , state){
+
+
+      } ,
       builder:(context , state){
+
+        print('pppppp ${CashHelper.getData(key: 'name')}');
         return Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: false,
@@ -73,7 +84,7 @@ class ProfileScreen extends StatelessWidget {
                                  CircleAvatar(
                                    radius:30 ,
                                    backgroundImage:
-                                   NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThsyVVdxkz5zyuE-yRKpdwtre_R234HkS2gQ&usqp=CAU'),
+                                   NetworkImage('${CashHelper.getData(key: 'avater')}'),
 
                                  ),
 
@@ -84,21 +95,21 @@ class ProfileScreen extends StatelessWidget {
                                    children:
                                    [
                                      createString(
-                                         title: 'John xx',
+                                         title: '${CashHelper.getData(key: 'name')}',
                                          color: defColor ,
                                          weight: FontWeightManager.semiBold ,
                                          fontSize: 15
                                      ),
 
                                      createString(
-                                         title: 'John@gmail.com',
+                                         title: '${CashHelper.getData(key: 'email')}',
                                          color: btnColor ,
                                          weight: FontWeightManager.semiBold ,
                                          fontSize: 14
                                      ),
 
                                      createString(
-                                         title: '+90 123456789',
+                                         title: '${CashHelper.getData(key: 'phone')}',
                                          color: btnColor ,
                                          weight: FontWeightManager.semiBold ,
                                          fontSize: 14
@@ -114,6 +125,8 @@ class ProfileScreen extends StatelessWidget {
                            InkWell(
                              onTap: (){
                                print('edit');
+                            navTo(context, EditDataScreen());
+
                              },
                              child: Container(
 
@@ -165,7 +178,7 @@ class ProfileScreen extends StatelessWidget {
                                  child: Icon(Icons.arrow_forward_ios_outlined, color: btnColor, ),
                                  onTap: (){
                                  print('arrowww');
-                                 Navigator.pushReplacement(context,
+                                 Navigator.push(context,
                                    MaterialPageRoute(builder: (context) => OrderScreen()),
                                  );
                                  },
@@ -197,6 +210,11 @@ class ProfileScreen extends StatelessWidget {
                                   child: Icon(Icons.arrow_forward_ios_outlined, color: btnColor, ),
                                   onTap: (){
                                     print('arrowww');
+
+                                    Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => LocationScreen()),
+                                    );
+
                                   },
                                 ),
 
@@ -225,7 +243,11 @@ class ProfileScreen extends StatelessWidget {
                                 InkWell(
                                   child: Icon(Icons.arrow_forward_ios_outlined, color: btnColor, ),
                                   onTap: (){
+
                                     print('arrowww');
+                                    Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => PaymentScreen()),
+                                    );
                                   },
                                 ),
 
@@ -447,8 +469,8 @@ class ProfileScreen extends StatelessWidget {
 
                         CashHelper.removeData(key: 'token').then((value) {
 
-                          Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => LoginScreen2()),
+                          Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => LoginScreen1()),
                           );
 
                         });
@@ -560,7 +582,12 @@ class ProfileScreen extends StatelessWidget {
 
                     CircleAvatar(radius: 10,
                       backgroundColor: defColor,
-                      child: Text('3' , style: TextStyle(color: Colors.white),),
+                      child:
+
+                      CashHelper.getData(key: 'notificationNum') !=null ?
+                      Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                      Text('0'   , style: TextStyle(color: Colors.white),),
+
                     )
 
 

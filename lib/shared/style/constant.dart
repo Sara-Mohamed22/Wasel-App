@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:wasel/data/local/cashHelper.dart';
+import 'package:wasel/models/cartModel.dart';
+import 'package:wasel/models/productModel.dart';
 
 Color defColor = Color(0xFF1C2945);
 Color btnColor = Color(0xff7EC242);
@@ -8,8 +10,21 @@ Color defborderColor = Color(0xFF8097B8);
 Color gray = Color(0xFF707070);
 String sign = '₺';
 
+
 String? lang   ;
 dynamic token  ;
+
+// List<DataInfo> cartProducts = [];
+List<dynamic> cartProducts = [];
+
+
+List <CartModel> cartsList = [];
+int? paymentID ;
+dynamic addressID ;
+
+
+
+
 
 const String loginString = 'سجل الدخول أو أنشئ حساب جديد' ;
 const String regString = 'انشاء حساب جديد' ;

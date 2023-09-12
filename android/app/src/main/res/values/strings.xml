@@ -1,0 +1,9 @@
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<resources>
+         <string name="app_name">wasel</string>
+        <string name="facebook_app_id">725146269419194</string>
+        <string name="fb_login_protocol_scheme">fb6e26c25b68c0e04526698d6d552e5d73</string>
+        <string name="facebook_client_token">4a4e442c96986f023acf88ffee1eb175</string>
+</resources>

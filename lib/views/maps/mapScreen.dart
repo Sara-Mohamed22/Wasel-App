@@ -1,13 +1,16 @@
 
 import 'dart:async';
 
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoder_location/geocoder.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
 import 'package:wasel/shared/style/constant.dart';
@@ -34,6 +37,7 @@ class _MapScreenState extends State<MapScreen> {
   LatLng showLocation = LatLng(26.6473333 , 34.0746422);
   Set<Marker> markers = {};
   String? myAddress;
+  String? addressName ;
 
   List<int> data = imgIcon ;
   late Uint8List markerIcon =Uint8List.fromList(data)  ;
@@ -95,24 +99,31 @@ class _MapScreenState extends State<MapScreen> {
   Future<String> getAddress(double lat, double long) async
   {
     try {
+
       var instance = GeocodingPlatform.instance;
       List<Placemark> placeMarks = await instance.placemarkFromCoordinates(
           lat, long);
 
       Placemark myPlace = placeMarks.first;
 
-      print('88888 $myPlace');
+      print('88888 ${myPlace}');
 
       myAddress = "${myPlace.name} - ${myPlace.street} - ${myPlace.country}";
 
+      addressName = myPlace.country ;
 
       print('myAddress $myAddress');
+
+
+
+
+
       return myAddress!;
     }
     catch (e) {
       print('error ${e.toString()}');
     }
-    return myAddress!;
+    return myAddress! ;
   }
 
 
@@ -141,9 +152,18 @@ class _MapScreenState extends State<MapScreen> {
       addMarker();
       setState(() {});
 
+       AppCubit cubit = AppCubit.get(context);
 
       return BlocConsumer<AppCubit, AppState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+
+          if(state is GetAddressSuccessState )
+            {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            }
+        },
         builder: (context, state) {
           return Scaffold(
             appBar: PreferredSize(
@@ -192,11 +212,22 @@ class _MapScreenState extends State<MapScreen> {
               },
               onTap: (_pos) async
               {
+
+
+
                 setState(() {
                   markers = {};
                   showLocation = LatLng(_pos.latitude, _pos.longitude);
+
+                  addressID = showLocation ;
+
+                  CashHelper.saveData(key: 'lat', value: showLocation.latitude);
+                  CashHelper.saveData(key: 'long', value: showLocation.longitude);
+
+                  print('showwwwwww ${showLocation}');
                   getAddress(_pos.latitude, _pos.longitude).then((value) async {
                     myAddress = value;
+
                     await showModalBottomSheet(
                       context: context,
                       builder: (context) {
@@ -214,27 +245,43 @@ class _MapScreenState extends State<MapScreen> {
                               ),),
                               SizedBox(height: 10,),
 
-                              Container(
-                                width: double.infinity,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: Color(0xff7EC242),
-                                    borderRadius: BorderRadius.circular(20)
+
+                              ConditionalBuilder(
+                                condition: state is !GetAddressLoadingState ,
+                                builder: (context)=> Container(
+                                  width: double.infinity,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff7EC242),
+                                      borderRadius: BorderRadius.circular(20)
+                                  ),
+                                  child: MaterialButton(onPressed: (){
+
+                                     cubit.getAddressID(
+                                      address:addressName,
+                                      lat: showLocation.latitude.toString() ,
+                                      lng: showLocation.longitude.toString() ,
+                                    );
+
+
+
+
+                                  }, child: Text('استمرار',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeightManager.semiBold,
+                                      fontFamily: fontFamily,
+                                      fontSize: FontSizeManager.s18,
+                                    ),),),
                                 ),
-                                child: MaterialButton(onPressed: () {
-                                  Navigator.pushReplacement(context,
-                                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                                  );
+                                fallback: (context)=> Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 20.0),
 
-
-                                }, child: Text('استمرار',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeightManager.semiBold,
-                                    fontFamily: fontFamily,
-                                    fontSize: FontSizeManager.s18,
-                                  ),),),
+                                  child: Center(child: CircularProgressIndicator()),
+                                ) ,
                               ),
+
+
                             ],
                           ),
                         );

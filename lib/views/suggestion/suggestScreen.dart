@@ -1,8 +1,10 @@
 
 
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
@@ -104,7 +106,7 @@ class SuggestScreen extends StatelessWidget {
                             keyboardType: TextInputType.text ,
                             controller: descPro ,
                             textAlign: TextAlign.center,
-                           validator: (val)=> val!.isEmpty ? 'Enter This Filed' : null ,
+                           // validator: (val)=> val!.isEmpty ? 'Enter This Filed' : null ,
                            maxLines: 5,
 
                             onChanged: (val){
@@ -136,32 +138,43 @@ class SuggestScreen extends StatelessWidget {
 
                     SizedBox(height: 30,),
 
-                    Container(
-                      width: MediaQuery.of(context).size.width/1.5,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          color: btnColor ,
-                          // border: Border.all(),
-                          borderRadius: BorderRadius.circular(50)
+                       ConditionalBuilder(
+                      condition: state is !ADDSUggestionLoadingState ,
+                      builder: (context)=> Container(
+                        width: MediaQuery.of(context).size.width/1.5,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: btnColor ,
+                            // border: Border.all(),
+                            borderRadius: BorderRadius.circular(50)
+                        ),
+                        child: MaterialButton(onPressed: (){
+
+                          if(_formKey.currentState!.validate() ) {
+
+                            cubit.addSuggestion(name: namePro.text , desc: descPro.text );
+
+                            Navigator.push(context,
+                              MaterialPageRoute(
+                                  builder: (context) => Suggest2Screen()),
+                            );
+
+                            print('send');
+                          }
+
+                        } , child: Text('Send',
+                          style: TextStyle(
+                            color: Colors.white ,
+                            fontWeight: FontWeightManager.semiBold ,
+                            fontFamily: fontFamily ,
+                            fontSize: FontSizeManager.s15 ,
+                          ),  ),),
+                      ) ,
+                      fallback: (context)=>  Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+
+                        child: CircularProgressIndicator(),
                       ),
-                      child: MaterialButton(onPressed: (){
-
-                         if(_formKey.currentState!.validate() ) {
-                           Navigator.push(context,
-                             MaterialPageRoute(
-                                 builder: (context) => Suggest2Screen()),
-                           );
-
-                           print('send');
-                         }
-
-                      } , child: Text('Send',
-                        style: TextStyle(
-                          color: Colors.white ,
-                          fontWeight: FontWeightManager.semiBold ,
-                          fontFamily: fontFamily ,
-                          fontSize: FontSizeManager.s15 ,
-                        ),  ),),
                     ),
 
                   ],
@@ -200,11 +213,11 @@ class SuggestScreen extends StatelessWidget {
                   children: [
                     Container(
 
-                      child: Image.asset('assets/images/search.png',color: cubit.selectNavBar , ),
+                      child: Image.asset('assets/images/search.png',color: cubit.unselectNavBar , ),
                       width: 28,
                       height: 28,
                     ),
-                    Text('Search'.tr , style: TextStyle(color: btnColor),)
+                    Text('Search'.tr , style: TextStyle(color: gray),)
                   ],
                 ) ,
 
@@ -261,7 +274,12 @@ class SuggestScreen extends StatelessWidget {
 
                     CircleAvatar(radius: 10,
                       backgroundColor: defColor,
-                      child: Text('3' , style: TextStyle(color: Colors.white),),
+                      child:
+
+                      CashHelper.getData(key: 'notificationNum') !=null ?
+
+                      Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                      Text('0'   , style: TextStyle(color: Colors.white),),
                     )
 
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:wasel/data/local/cashHelper.dart';
 import 'package:wasel/shared/component.dart';
 import 'package:wasel/shared/cubit/app-cubit.dart';
 import 'package:wasel/shared/cubit/app-state.dart';
@@ -8,7 +9,8 @@ import 'package:wasel/shared/style/constant.dart';
 import 'package:wasel/shared/style/fonts.dart';
 
 class OrderDetail extends StatelessWidget {
-  const OrderDetail({Key? key}) : super(key: key);
+  dynamic sendOrderModel ;
+   OrderDetail({Key? key , this.sendOrderModel }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,104 +45,102 @@ class OrderDetail extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
 
-                        child: Expanded(
+                        child: Row(
+                          children:
+                          [
 
-                          child: Row(
-                            children:
-                            [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start ,
+                              children:
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start ,
-                                children:
-
-                                [
-                                  Row(
-                                    children: [
-                                      createString(
-                                          title: 'Order Number : ',
-                                          color: defColor ,
-                                          weight: FontWeightManager.regular ,
-                                          fontSize: 13
-                                      ),
-
-                                      createString(
-                                          title: ' #123456789',
-                                          color: defColor ,
-                                          weight: FontWeightManager.regular ,
-                                          fontSize: 13
-                                      ),
-
-                                      SizedBox(width: 20,),
-
-                                      createString(
-                                          title: '26.07',
-                                          color: btnColor ,
-                                          weight: FontWeightManager.semiBold ,
-                                          fontSize: 13
-                                      ),
-
-                                      SizedBox(width: 3,),
-
-                                      createString(
-                                          title: 'Lira',
-                                          color: btnColor ,
-                                          weight: FontWeightManager.semiBold ,
-                                          fontSize: 13
-                                      ),
-                                    ],
-                                  ),
-
-
-
-                                  Row(
-                                    children: [
-                                      createString(
-                                          title: 'Request Preparing',
-                                          color: Color(0xFF4267B2) ,
-                                          weight: FontWeightManager.regular ,
-                                          fontSize: 15
-                                      ),
-
-                                      SizedBox(width: 30,),
-                                      createString(
-                                          title: 'June 14,2023',
-                                          color: Color(0xFF4267B2) ,
-                                          weight: FontWeightManager.regular ,
-                                          fontSize: 13
-                                      ),
-
-                                    ],
-                                  ),
-
-                                  Container(
-                                    width: MediaQuery.of(context).size.width/2.2,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        color: defColor,
-                                        // border: Border.all(),
-                                        borderRadius: BorderRadius.circular(50)
+                              [
+                                Row(
+                                  children: [
+                                    createString(
+                                        title: 'Order Number : ',
+                                        color: defColor ,
+                                        weight: FontWeightManager.regular ,
+                                        fontSize: 13
                                     ),
-                                    child: MaterialButton(onPressed: (){
 
-                                      // Navigator.pushReplacement(context,
-                                      //   MaterialPageRoute(builder: (context) => MapScreen()),
-                                      // );
+                                    createString(
+                                        title: ' # ${sendOrderModel?.id }',
+                                        color: defColor ,
+                                        weight: FontWeightManager.regular ,
+                                        fontSize: 13
+                                    ),
 
-                                      print('track order');
+                                    SizedBox(width: 20,),
 
-                                    } , child: Text('Track Order',
-                                      style: TextStyle(
-                                        color: Colors.white ,
-                                        fontWeight: FontWeightManager.semiBold ,
-                                        fontFamily: fontFamily ,
-                                        fontSize: FontSizeManager.s15 ,
-                                      ),  ),),
+                                    createString(
+                                        title: '${sendOrderModel?.total }',
+                                        color: btnColor ,
+                                        weight: FontWeightManager.semiBold ,
+                                        fontSize: 13
+                                    ),
+
+                                    SizedBox(width: 3,),
+
+                                    createString(
+                                        title: 'Lira',
+                                        color: btnColor ,
+                                        weight: FontWeightManager.semiBold ,
+                                        fontSize: 13
+                                    ),
+                                  ],
+                                ),
+
+
+
+                                Row(
+                                  children: [
+                                    createString(
+                                        title: '${sendOrderModel?.status }',
+                                        color: Color(0xFF4267B2) ,
+                                        weight: FontWeightManager.regular ,
+                                        fontSize: 15
+                                    ),
+
+                                    SizedBox(width: 30,),
+                                    createString(
+                                        title: '${sendOrderModel?.createdAt }',
+                                        color: Color(0xFF4267B2) ,
+                                        weight: FontWeightManager.regular ,
+                                        fontSize: 13
+                                    ),
+
+                                  ],
+                                ),
+
+                                Container(
+                                  width: MediaQuery.of(context).size.width/2.2,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: defColor,
+                                      // border: Border.all(),
+                                      borderRadius: BorderRadius.circular(50)
                                   ),
+                                  child: MaterialButton(onPressed: (){
+
+                                    // Navigator.pushReplacement(context,
+                                    //   MaterialPageRoute(builder: (context) => MapScreen()),
+                                    // );
+
+                                    print('track order');
+
+                                  } , child: Text('Track Order',
+                                    style: TextStyle(
+                                      color: Colors.white ,
+                                      fontWeight: FontWeightManager.semiBold ,
+                                      fontFamily: fontFamily ,
+                                      fontSize: FontSizeManager.s15 ,
+                                    ),  ),),
+                                ),
 
 
 
-                                ],
-                              ),
+                              ],
+                            ),
 
 
 
@@ -150,8 +150,7 @@ class OrderDetail extends StatelessWidget {
 
 
 
-                            ],
-                          ),
+                          ],
                         ),
                       ),
                     ),
@@ -180,7 +179,7 @@ class OrderDetail extends StatelessWidget {
                         ),
 
                         createString(
-                            title:' Mansoura - Egypt' ,
+                            title:' ${sendOrderModel?.address?.name }' ,
                             color: defColor,
                             fontSize: 15 ,
                             weight: FontWeightManager.semiBold
@@ -199,6 +198,60 @@ class OrderDetail extends StatelessWidget {
                         ),
 
                         Container(
+                          // height: MediaQuery.of(context).size.height/2 ,
+                          child: ListView.separated(
+
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              physics: BouncingScrollPhysics(),
+                              itemBuilder: (context , index){
+
+
+                                return
+
+                                  Container(
+                                      height: 40,
+                                      child:
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+
+                                          createString(
+                                              title:'${sendOrderModel?.orderItems?[index].name }' ,
+                                              color: defColor,
+                                              fontSize: 15 ,
+                                              weight: FontWeightManager.semiBold
+
+                                          ),
+
+                                          createString(
+                                              title:'${sendOrderModel?.orderItems?[index].quantity } x' ,
+                                              color: btnColor,
+                                              fontSize: 15 ,
+                                              weight: FontWeightManager.semiBold
+
+                                          ),
+
+
+                                          createString(
+                                              title:'${sendOrderModel?.orderItems?[index].price }' ,
+                                              color: btnColor,
+                                              fontSize: 15 ,
+                                              weight: FontWeightManager.semiBold
+
+                                          ),
+                                        ],
+                                      )
+                                  );
+
+                              }
+
+                              ,
+                              separatorBuilder: (context, index)=> SizedBox(height: 20,),
+                              itemCount: sendOrderModel!.orderItems!.length ),
+                        ),
+
+                       /* Container(
                             height: 40,
                             child:
                             Row(
@@ -270,7 +323,7 @@ class OrderDetail extends StatelessWidget {
                             )
                         ),
 
-                        Divider(thickness: 2, color: Colors.black12),
+                        Divider(thickness: 2, color: Colors.black12),*/
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween ,
@@ -283,7 +336,7 @@ class OrderDetail extends StatelessWidget {
 
                             ),
                             createString(
-                                title:'26.07 ₺' ,
+                                title:'${sendOrderModel?.total} ₺' ,
                                 color: btnColor,
                                 fontSize: 18 ,
                                 weight: FontWeightManager.semiBold
@@ -322,7 +375,7 @@ class OrderDetail extends StatelessWidget {
 
 
                             createString(
-                                title:'5.00 $sign' ,
+                                title:'${sendOrderModel?.shippingCost } $sign' ,
                                 color: btnColor,
                                 fontSize: 13 ,
                                 weight: FontWeightManager.semiBold
@@ -348,7 +401,7 @@ class OrderDetail extends StatelessWidget {
 
 
                             createString(
-                                title:'3.73 $sign' ,
+                                title:'${sendOrderModel?.taxTotal * .1 }  $sign' ,
                                 color: btnColor,
                                 fontSize: 13 ,
                                 weight: FontWeightManager.semiBold
@@ -374,7 +427,7 @@ class OrderDetail extends StatelessWidget {
 
 
                             createString(
-                                title:'8.73 $sign' ,
+                                title:'${sendOrderModel?.taxTotal } $sign' ,
                                 color: btnColor,
                                 fontSize: 13 ,
                                 weight: FontWeightManager.semiBold
@@ -484,7 +537,12 @@ class OrderDetail extends StatelessWidget {
 
                     CircleAvatar(radius: 10,
                       backgroundColor: defColor,
-                      child: Text('3' , style: TextStyle(color: Colors.white),),
+                      child:
+
+                      CashHelper.getData(key: 'notificationNum') !=null ?
+
+                      Text('${CashHelper.getData(key: 'notificationNum')}'   , style: TextStyle(color: Colors.white),):
+                      Text('0'   , style: TextStyle(color: Colors.white),),
                     )
 
 
